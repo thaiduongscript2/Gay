@@ -69,3 +69,4 @@ https://raw.githubusercontent.com/vakhov/fresh-proxy-list/master/http.txt
 https://raw.githubusercontent.com/tuanminpay/live-proxy/master/http.txt
 https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/master/http.txt
 https://raw.githubusercontent.com/proxy4parsing/proxy-list/main/http.txt
+https://rcloak.com/api/proxies/raw?protocol=http
